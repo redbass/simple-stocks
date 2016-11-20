@@ -58,9 +58,9 @@ def calculate_stock_price(stock_symbol, period=15):
                  .format(symbol=stock_symbol, value=stock_price))
 
 
-def calculate_gbce():
+def calculate_share_index():
     """
-    The GBCE All Share Index
+    The All Share Index
     """
     stock_prices = []
 
@@ -75,9 +75,10 @@ def calculate_gbce():
         if stock_price > 0:
             stock_prices.append(float(stock_price))
 
-    gbce = _geometric_mean(stock_prices)
+    share_index = _geometric_mean(stock_prices)
 
-    logging.info("The GBCE All Share Index is '{value}'".format(value=gbce))
+    logging.info("The GBCE All Share Index is '{value}'"
+                 .format(value=share_index))
 
 
 

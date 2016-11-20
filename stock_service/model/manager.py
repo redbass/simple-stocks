@@ -59,6 +59,11 @@ class TradeManager(object):
         return self._stocks.get(symbol)
 
     def get_trades_by_symbol(self, stock_symbol):
+        """
+        Get a list of trades by symbol
+        :param stock_symbol:
+        :return:
+        """
         self.get_trades_in_range(stock_symbol, 0)
 
     def get_trades_in_range(self, stock_symbol, period_min=15):

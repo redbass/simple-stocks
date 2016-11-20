@@ -50,7 +50,7 @@ def run_app():
     for symbol in symbols:
         service.calculate_stock_price(symbol)
 
-    service.calculate_gbce()
+    service.calculate_share_index()
 
     pass
 
