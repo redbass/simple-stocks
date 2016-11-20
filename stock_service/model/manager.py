@@ -9,11 +9,9 @@ from stock_service.model.trade import Trade
 
 class TradeManager(object):
 
-    _trades = []
-    _stocks = {}
-
     def __init__(self):
         self._stocks = load_base_stocks()
+        self._trades = []
 
     def record_trade(self, trade):
         """
@@ -40,9 +38,16 @@ class TradeManager(object):
         """
         return symbol in self._stocks
 
+    def get_trades(self):
+        """
+        Return the list of all the trades
+        :return: stock_service.model.trade.Trade
+        """
+        return copy.deepcopy(self._trades)
+
     def get_stocks(self):
         """
-        Return the list of all the st
+        Return the list of all the stocks
         :return: stock_service.model.stock.Stock
         """
         return copy.deepcopy(self._stocks).iteritems()

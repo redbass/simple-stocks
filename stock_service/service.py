@@ -64,10 +64,6 @@ def calculate_share_index():
     """
     stock_prices = []
 
-    def _geometric_mean(n):
-        # source: http://www.jeffcomput.es/posts/2014/03/python-geometric-mean/
-        return reduce(lambda x, y: x * y, n) ** (1.0 / len(n))
-
     for _, stock in trade_manager.get_stocks():
 
         trades = trade_manager.get_trades_in_range(stock.symbol)
@@ -75,11 +71,7 @@ def calculate_share_index():
         if stock_price > 0:
             stock_prices.append(float(stock_price))
 
-    share_index = _geometric_mean(stock_prices)
+    share_index = fn.geometric_mean(stock_prices)
 
     logging.info("The GBCE All Share Index is '{value}'"
                  .format(value=share_index))
-
-
-
-

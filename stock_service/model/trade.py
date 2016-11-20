@@ -9,12 +9,6 @@ class TradeType(Enum):
 
 class Trade(object):
 
-    timeStamp = None
-    stock_symbol = None
-    type = None
-    shares_quantity = 0
-    price = 0.0
-
     def __init__(self, stock_symbol, trade_type, shares_quantity, price):
 
         self.timeStamp = datetime.utcnow()

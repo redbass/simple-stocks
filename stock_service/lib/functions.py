@@ -1,6 +1,8 @@
 from stock_service.lib.exceptions import UnhandledException
 from stock_service.model.stock import StockType
 
+NULL_VALUE = 0
+
 
 def calculate_dividend_yield(stock):
     """
@@ -8,7 +10,7 @@ def calculate_dividend_yield(stock):
     :param stock: Stock
     :return: the dividend yield
     """
-    dividend_yield = -1.0
+    dividend_yield = NULL_VALUE
 
     if stock.ticker_price > 0.0:
         if stock.stock_type == StockType.COMMON:
@@ -26,7 +28,7 @@ def calculate_pe_ratio(stock):
     :param stock: Stock
     :return: the P/E ratio
     """
-    pe_ratio = -1.0
+    pe_ratio = NULL_VALUE
 
     if stock.ticker_price > 0.0:
         dividend = calculate_dividend_yield(stock)
@@ -61,3 +63,8 @@ def calculate_trades_stock_price(trades):
         stock_price = trade_price_accum / share_quantity_accum
 
     return stock_price
+
+
+def geometric_mean(n):
+    # source: http://www.jeffcomput.es/posts/2014/03/python-geometric-mean/
+    return reduce(lambda x, y: x * y, n) ** (1.0 / len(n))
