@@ -1,8 +1,7 @@
 import logging
 
+from stock_service.lib import functions as fn
 from stock_service.lib.exceptions import UnhandledException
-from stock_service.lib.functions import calculate_trades_stock_price, \
-    get_trades_in_range
 from stock_service.model.manager import TradeManager
 
 trade_manager = TradeManager()
@@ -23,7 +22,7 @@ def calculate_dividend_yield(stock_symbol):
     :param stock_symbol:
     """
     stock = trade_manager.get_stock(stock_symbol)
-    value = stock.get_dividend_yield()
+    value = fn.calculate_dividend_yield(stock)
 
     logging.info("The dividend yield for the stock '{symbol}' is '{value}'"
                  .format(symbol=stock_symbol, value=value))
@@ -36,7 +35,7 @@ def calculate_pe_ratio(stock_symbol):
     """
     try:
         stock = trade_manager.get_stock(stock_symbol)
-        pe = stock.get_pe_ratio()
+        pe = fn.calculate_pe_ratio(stock)
 
         logging.info("The P/E ratio for the stock '{symbol}' is '{value}'"
                      .format(symbol=stock_symbol, value=pe))
@@ -51,8 +50,9 @@ def calculate_stock_price(stock_symbol, period=15):
     :param stock_symbol:
     :param period:
     """
+    trades = trade_manager.get_trades_in_range(stock_symbol, period)
 
-    stock_price = calculate_trades_stock_price(stock_symbol, period)
+    stock_price = fn.calculate_trades_stock_price(trades)
 
     logging.info("The Stock Price for the stock '{symbol}' is '{value}'"
                  .format(symbol=stock_symbol, value=stock_price))
@@ -70,10 +70,8 @@ def calculate_gbce():
 
     for _, stock in trade_manager.get_stocks():
 
-        trades = get_trades_in_range(stock_symbol, 0)
-
-
-        stock_price = calculate_trades_stock_price(trades)
+        trades = trade_manager.get_trades_in_range(stock.symbol)
+        stock_price = fn.calculate_trades_stock_price(trades)
         if stock_price > 0:
             stock_prices.append(float(stock_price))
 

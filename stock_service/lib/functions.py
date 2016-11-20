@@ -1,54 +1,53 @@
-from datetime import datetime
-
+from stock_service.lib.exceptions import UnhandledException
 from stock_service.model.stock import StockType
 
 
-def calculate_dividend_yield(self):
+def calculate_dividend_yield(stock):
     """
-    Calculate the dividend yieald
-    :return: dividend yield
-    :rtype float
+    Calculate the dividend yield of the given stock
+    :param stock: Stock
+    :return: the dividend yield
     """
     dividend_yield = -1.0
 
-    if self.ticker_price > 0.0:
-        if self.stock_type == StockType.COMMON:
-            dividend_yield = self.last_dividend / self.ticker_price
+    if stock.ticker_price > 0.0:
+        if stock.stock_type == StockType.COMMON:
+            dividend_yield = stock.last_dividend / stock.ticker_price
         else:
             dividend_yield = \
-                self.fixed_dividend * self.par_value / self.ticker_price
+                stock.fixed_dividend * stock.par_value / stock.ticker_price
 
     return dividend_yield
 
 
-def get_trades_in_range(trades, stock_symbol, period_min=15):
+def calculate_pe_ratio(stock):
     """
-    Return a generator of trades inputted in the last 'period_min' minutes
-    :param stock_symbol
-    :param period_min: minutes
-    :rtype: generator of trades
+    Calculate the P/E ratio of the given stock
+    :param stock: Stock
+    :return: the P/E ratio
     """
+    pe_ratio = -1.0
 
-    # if not self.has_stock(stock_symbol):
-    #     raise StockNotFound(stock_symbol)
+    if stock.ticker_price > 0.0:
+        dividend = calculate_dividend_yield(stock)
 
-    end_period = datetime.utcnow()
-    start_period = end_period - datetime.timedelta(minutes=period_min)
+        if dividend <= 0:
+            raise UnhandledException(
+                message="Impossible to calculate the PE ratio. "
+                        "The Dividend yield value for '%s' is <= 0" %
+                        stock.symbol)
 
-    return [trade for trade in trades
-            if (start_period < trade.timeStamp <= end_period or
-                period_min == 0) and
-            trade.stock_symbol == stock_symbol]
+        pe_ratio = stock.ticker_price / dividend
+
+    return pe_ratio
 
 
 def calculate_trades_stock_price(trades):
     """
-
+    Calculate the Stock Price of the given stock trades
     :param trades:
-    :return:
+    :return: the stock price
     """
-
-    # trades = self.get_trades_in_range(stock_symbol, period)
 
     stock_price = 0.0
     trade_price_accum = 0.0

@@ -1,5 +1,6 @@
 import copy
-import logging
+from datetime import datetime
+from datetime import timedelta
 
 from stock_service.lib.data import load_base_stocks
 from stock_service.lib.exceptions import StockNotFound
@@ -8,16 +9,11 @@ from stock_service.model.trade import Trade
 
 class TradeManager(object):
 
-    _instance = None
     _trades = []
     _stocks = {}
 
     def __init__(self):
-
         self._stocks = load_base_stocks()
-
-        logging.info("Trade manager initialized with '%s' stock" %
-                     len(self._stocks))
 
     def record_trade(self, trade):
         """
@@ -33,12 +29,7 @@ class TradeManager(object):
 
         stock = self.get_stock(trade.stock_symbol)
         self._trades.append(trade)
-
-        prev_price = stock.ticker_price
         stock.ticker_price = trade.price
-        logging.info("The ticker price for the stock '%s' has been set to %s "
-                     "(before '%s')" % (stock.symbol, stock.ticker_price,
-                                        prev_price))
 
     def has_stock(self, symbol):
         """
@@ -67,6 +58,26 @@ class TradeManager(object):
 
         return self._stocks.get(symbol)
 
+    def get_trades_by_symbol(self, stock_symbol):
+        self.get_trades_in_range(stock_symbol, 0)
 
+    def get_trades_in_range(self, stock_symbol, period_min=15):
+        """
+        Return a generator of trades inputted in the last 'period_min' minutes
+        :param stock_symbol
+        :param period_min: minutes
+        :rtype: generator of trades
+        """
+
+        if not self.has_stock(stock_symbol):
+            raise StockNotFound(stock_symbol)
+
+        end_period = datetime.utcnow()
+        start_period = end_period - timedelta(minutes=period_min)
+
+        return [trade for trade in self._trades
+                if (start_period < trade.timeStamp <= end_period or
+                    period_min == 0) and
+                trade.stock_symbol == stock_symbol]
 
 

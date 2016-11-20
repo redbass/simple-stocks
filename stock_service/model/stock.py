@@ -1,7 +1,5 @@
 from aetypes import Enum
 
-from stock_service.lib.exceptions import UnhandledException
-
 
 class StockType(Enum):
     # Common Stock: the dividend yield is calculated with last dividend.
@@ -24,20 +22,5 @@ class Stock(object):
         if "%" in fixed_dividend:
             value = fixed_dividend[:-1].replace(" ", "")
             self.fixed_dividend = float(value) / 100
-
-    def get_pe_ratio(self):
-        pe_ratio = -1.0
-
-        if self.ticker_price > 0.0:
-            dividend = self.get_dividend_yield()
-
-            if dividend <= 0:
-                raise UnhandledException(
-                    message="Impossible to calculate the PE ratio. "
-                            "The Dividend yield value for '%s' is <= 0" %
-                            self.symbol)
-
-            pe_ratio = self.ticker_price / dividend
-
-        return pe_ratio
-
+        else:
+            self.fixed_dividend = fixed_dividend

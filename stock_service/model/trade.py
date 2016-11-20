@@ -20,7 +20,7 @@ class Trade(object):
         self.timeStamp = datetime.utcnow()
         self.stock_symbol = stock_symbol
 
-        if not trade_type in [TradeType.BUY, TradeType.SELL]:
+        if trade_type not in [TradeType.BUY, TradeType.SELL]:
             raise ValueError("Invalid Trade object: the type is not a valid"
                              "TradeType enum")
         self.type = trade_type
